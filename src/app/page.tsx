@@ -1,65 +1,124 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CodeEditor } from "@/components/ui/code-editor";
+import { TableRow } from "@/components/ui/table-row";
+import { Toggle } from "@/components/ui/toggle";
+
+const leaderboardData = [
+	{
+		rank: 1,
+		score: 2.1,
+		code: "function calculateTotal(items) {",
+		language: "javascript",
+	},
+	{
+		rank: 2,
+		score: 3.5,
+		code: "const sum = (arr) => arr.reduce(",
+		language: "javascript",
+	},
+	{
+		rank: 3,
+		score: 4.2,
+		code: "let result = 0; for...",
+		language: "javascript",
+	},
+];
+
+export default function HomePage() {
+	const [code, setCode] = useState("");
+
+	return (
+		<main className="flex flex-col items-center w-full">
+			<div className="w-full max-w-[1440px] px-10 flex flex-col items-center gap-8 pt-20">
+				<div className="flex flex-col gap-3 text-center">
+					<h1 className="font-mono text-4xl font-bold text-text-primary">
+						<span className="text-accent-green">$</span> paste your code. get
+						roasted.
+					</h1>
+					<p className="font-mono text-sm text-text-secondary">
+						{/* drop your code below and we'll rate it — brutally honest or full roast mode */}
+					</p>
+				</div>
+
+				<CodeEditor value={code} onChange={setCode} />
+
+				<div className="w-full max-w-[780px] flex items-center justify-between">
+					<div className="flex items-center gap-4">
+						<Toggle defaultChecked={true} label="roast mode" />
+						<span className="font-mono text-xs text-text-tertiary">
+							{/* maximum sarcasm enabled */}
+						</span>
+					</div>
+					<Button variant="default">$ roast_my_code</Button>
+				</div>
+
+				<div className="flex items-center gap-6 text-text-tertiary font-mono text-xs">
+					<span>2,847 codes roasted</span>
+					<span>·</span>
+					<span>avg score: 4.2/10</span>
+				</div>
+
+				<div className="w-full max-w-[960px] flex flex-col gap-6 pt-20 pb-20">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center gap-2">
+							<span className="text-accent-green font-mono text-sm font-bold">
+								{"//"}
+							</span>
+							<span className="text-text-primary font-mono text-sm font-bold">
+								shame_leaderboard
+							</span>
+						</div>
+						<Button variant="outline" size="sm">
+							$ view_all &gt;&gt;
+						</Button>
+					</div>
+
+					<p className="font-mono text-xs text-text-tertiary">
+						{/* the worst code on the internet, ranked by shame */}
+					</p>
+
+					<div className="border border-border-primary rounded overflow-hidden">
+						<div className="flex items-center h-10 px-5 bg-bg-surface border-b border-border-primary">
+							<span className="font-mono text-xs text-text-tertiary w-[50px]">
+								rank
+							</span>
+							<span className="font-mono text-xs text-text-tertiary w-[70px]">
+								score
+							</span>
+							<span className="font-mono text-xs text-text-tertiary flex-1">
+								code
+							</span>
+							<span className="font-mono text-xs text-text-tertiary w-[100px] text-right">
+								lang
+							</span>
+						</div>
+						{leaderboardData.map((item) => (
+							<TableRow
+								key={item.rank}
+								rank={item.rank}
+								score={item.score}
+								code={item.code}
+								language={item.language}
+							/>
+						))}
+					</div>
+
+					<div className="text-center pt-4">
+						<span className="font-mono text-xs text-text-tertiary">
+							showing top 3 of 2,847 ·{" "}
+							<a
+								href="/leaderboard"
+								className="text-text-secondary hover:underline"
+							>
+								view full leaderboard &gt;&gt;
+							</a>
+						</span>
+					</div>
+				</div>
+			</div>
+		</main>
+	);
 }
