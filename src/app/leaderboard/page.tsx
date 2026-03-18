@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
 				<div className="flex flex-col gap-4">
 					<div className="flex items-center gap-3">
 						<span className="text-accent-green font-mono text-[32px] font-bold">
-							$
+							&gt;
 						</span>
 						<h1 className="font-mono text-[28px] font-bold text-text-primary">
 							shame_leaderboard
@@ -111,11 +111,14 @@ export default function LeaderboardPage() {
 						>
 							<div className="flex items-center justify-between h-12 px-5 bg-bg-surface border-b border-border-primary">
 								<div className="flex items-center gap-4">
-									<span className="font-mono text-sm text-text-tertiary w-[30px]">
+									<span className="font-mono text-[13px] text-text-tertiary">
 										#{item.rank}
 									</span>
-									<span className="font-mono text-sm font-bold text-text-primary w-[50px]">
-										{item.score}/10
+									<span className="font-mono text-[12px] text-text-tertiary">
+										score:{" "}
+										<span className="text-accent-red font-mono text-[13px] font-bold">
+											{item.score}
+										</span>
 									</span>
 								</div>
 								<div className="flex items-center gap-3">
