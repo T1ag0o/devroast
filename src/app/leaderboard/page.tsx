@@ -93,7 +93,8 @@ export default function LeaderboardPage() {
 						</h1>
 					</div>
 					<p className="font-mono text-sm text-text-secondary">
-						{/* the most roasted code on the internet */}
+						<span className="text-accent-green">//</span> the most roasted code
+						on the internet
 					</p>
 					<div className="flex items-center gap-2 text-text-tertiary font-mono text-xs">
 						<span>2,847 submissions</span>
