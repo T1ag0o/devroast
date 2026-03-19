@@ -13,13 +13,13 @@ export async function CodeBlock({
 }: CodeBlockProps) {
 	const html = await codeToHtml(code, {
 		lang: language,
-		theme: "vesper",
+		theme: "dracula",
 	});
 
 	return (
-		<div className="bg-bg-input border border-border-primary rounded overflow-hidden w-full max-w-[560px]">
+		<div className="w-full min-w-0">
 			{filename && (
-				<div className="flex items-center gap-3 h-10 px-4 border-b border-border-primary">
+				<div className="flex items-center gap-3 h-10 px-4 border border-border-primary border-b-0 rounded-t overflow-hidden bg-bg-surface">
 					<span className="w-2.5 h-2.5 rounded-full bg-accent-red" />
 					<span className="w-2.5 h-2.5 rounded-full bg-accent-amber" />
 					<span className="w-2.5 h-2.5 rounded-full bg-accent-green" />
@@ -29,10 +29,12 @@ export async function CodeBlock({
 					</span>
 				</div>
 			)}
-			<div
-				className="[&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:overflow-x-auto"
-				dangerouslySetInnerHTML={{ __html: html }}
-			/>
+			<div className="overflow-x-auto">
+				<div
+					className="[&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:!bg-[#111111] min-w-max"
+					dangerouslySetInnerHTML={{ __html: html }}
+				/>
+			</div>
 		</div>
 	);
 }

@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+import { CodeBlock } from "@/components/ui/code-block";
 
 export const metadata: Metadata = {
 	title: "shame_leaderboard | devroast",
 	description: "The most roasted code on the internet",
 };
+
+function getScoreColor(score: number): string {
+	if (score <= 2) return "text-[#ff3333]";
+	if (score <= 3) return "text-accent-red";
+	if (score <= 4) return "text-[#ff6633]";
+	if (score <= 5) return "text-orange-500";
+	if (score <= 6) return "text-accent-amber";
+	if (score <= 7) return "text-yellow-400";
+	if (score <= 8) return "text-lime-400";
+	return "text-accent-green";
+}
 
 const leaderboardData = [
 	{
@@ -109,19 +121,22 @@ export default function LeaderboardPage() {
 							key={item.rank}
 							className="flex flex-col border border-border-primary rounded overflow-hidden"
 						>
-							<div className="flex items-center justify-between h-12 px-5 bg-bg-surface border-b border-border-primary">
-								<div className="flex items-center gap-4">
-									<span className="font-mono text-[13px] text-text-tertiary">
-										#{item.rank}
+							<div className="flex items-center justify-between h-12 px-5 bg-bg-surface border-b border-border-primary min-w-0">
+								<div className="flex items-center gap-4 min-w-0">
+									<span className="font-mono text-[13px]">
+										<span className="text-text-tertiary">#</span>
+										<span className="text-primary font-bold">{item.rank}</span>
 									</span>
 									<span className="font-mono text-[12px] text-text-tertiary">
 										score:{" "}
-										<span className="text-accent-red font-mono text-[13px] font-bold">
+										<span
+											className={`font-mono text-[13px] font-bold ${getScoreColor(item.score)}`}
+										>
 											{item.score}
 										</span>
 									</span>
 								</div>
-								<div className="flex items-center gap-3">
+								<div className="flex items-center gap-3 flex-shrink-0">
 									<span className="font-mono text-xs text-text-secondary">
 										{item.language}
 									</span>
@@ -130,8 +145,8 @@ export default function LeaderboardPage() {
 									</span>
 								</div>
 							</div>
-							<div className="flex bg-bg-input h-[120px]">
-								<div className="flex flex-col gap-1 px-[14px] py-3 bg-bg-surface border-r border-border-primary min-w-[40px]">
+							<div className="flex min-h-[120px] min-w-0">
+								<div className="flex flex-col gap-1 px-[14px] py-3 bg-bg-surface border-r border-border-primary min-w-[40px] flex-shrink-0">
 									{item.code.split("\n").map((_line, idx) => (
 										<span
 											key={`${item.rank}-${idx}`}
@@ -141,11 +156,9 @@ export default function LeaderboardPage() {
 										</span>
 									))}
 								</div>
-								<pre className="flex-1 overflow-hidden px-4 py-3">
-									<code className="font-mono text-xs text-text-primary leading-[22px] whitespace-pre">
-										{item.code}
-									</code>
-								</pre>
+								<div className="flex-1 min-w-0 overflow-hidden bg-bg-input">
+									<CodeBlock code={item.code} language={item.language} />
+								</div>
 							</div>
 						</div>
 					))}
