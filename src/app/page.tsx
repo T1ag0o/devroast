@@ -29,6 +29,8 @@ const leaderboardData = [
 
 export default function HomePage() {
 	const [code, setCode] = useState("");
+	const MAX_LENGTH = 2000;
+	const isOverLimit = code.length > MAX_LENGTH;
 
 	return (
 		<main className="flex flex-col items-center w-full">
@@ -43,7 +45,7 @@ export default function HomePage() {
 					</p>
 				</div>
 
-				<CodeEditor value={code} onChange={setCode} />
+				<CodeEditor value={code} onChange={setCode} maxLength={MAX_LENGTH} />
 
 				<div className="w-full max-w-[780px] flex items-center justify-between">
 					<div className="flex items-center gap-4">
@@ -52,7 +54,9 @@ export default function HomePage() {
 							{/* maximum sarcasm enabled */}
 						</span>
 					</div>
-					<Button variant="default">$ roast_my_code</Button>
+					<Button variant="default" disabled={isOverLimit}>
+						$ roast_my_code
+					</Button>
 				</div>
 
 				<div className="flex items-center gap-6 text-text-tertiary font-mono text-xs">

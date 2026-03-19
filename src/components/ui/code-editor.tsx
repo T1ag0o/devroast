@@ -44,17 +44,36 @@ const textareaStyles = tv({
 	base: "absolute inset-0 w-full h-full p-4 font-mono text-sm bg-transparent text-transparent caret-white resize-none focus:outline-none whitespace-pre-wrap break-words",
 });
 
+const indicatorVariants = tv({
+	base: "absolute bottom-2 right-3 font-mono text-xs select-none z-10",
+	variants: {
+		state: {
+			normal: "text-text-tertiary",
+			warning: "text-accent-amber",
+			error: "text-accent-red",
+		},
+	},
+});
+
 export interface CodeEditorProps {
 	filename?: string;
 	lineCount?: number;
 	value?: string;
 	onChange?: (value: string) => void;
+	maxLength?: number;
 	className?: string;
 }
 
 export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 	(
-		{ className, value: controlledValue, onChange, filename, lineCount = 16 },
+		{
+			className,
+			value: controlledValue,
+			onChange,
+			filename,
+			lineCount = 16,
+			maxLength = 2000,
+		},
 		ref,
 	) => {
 		const [internalValue, setInternalValue] = useState("");
@@ -65,6 +84,14 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 		const highlightRef = useRef<HTMLDivElement>(null);
 		const isControlled = controlledValue !== undefined;
 		const code = isControlled ? controlledValue : internalValue;
+
+		const isOverLimit = code.length > maxLength;
+		const isNearLimit = code.length > maxLength * 0.9;
+		const indicatorState = isOverLimit
+			? "error"
+			: isNearLimit
+				? "warning"
+				: "normal";
 
 		const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -310,6 +337,9 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 							spellCheck={false}
 							style={{ height: "100%" }}
 						/>
+						<span className={indicatorVariants({ state: indicatorState })}>
+							{code.length.toLocaleString()} / {maxLength.toLocaleString()}
+						</span>
 					</div>
 				</div>
 			</div>
