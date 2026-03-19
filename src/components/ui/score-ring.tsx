@@ -14,9 +14,30 @@ function getScoreColor(value: number, max: number): string {
 	return "#EF4444";
 }
 
+function getScoreGradientStops(
+	value: number,
+	max: number,
+): { color: string; offset: string }[] {
+	const percentage = value / max;
+	if (percentage >= 0.7) {
+		return [
+			{ color: "#EF4444", offset: "0%" },
+			{ color: "#F59E0B", offset: "35%" },
+			{ color: "#10B981", offset: "35%" },
+		];
+	}
+	if (percentage >= 0.4) {
+		return [
+			{ color: "#EF4444", offset: "0%" },
+			{ color: "#F59E0B", offset: "0%" },
+		];
+	}
+	return [{ color: "#EF4444", offset: "0%" }];
+}
+
 export const ScoreRing = forwardRef<HTMLDivElement, ScoreRingProps>(
 	(
-		{ value, max = 10, size = 180, strokeWidth = 8, className, ...props },
+		{ value, max = 10, size = 180, strokeWidth = 4, className, ...props },
 		ref,
 	) => {
 		const percentage = Math.min(Math.max(value / max, 0), 1);
@@ -24,6 +45,8 @@ export const ScoreRing = forwardRef<HTMLDivElement, ScoreRingProps>(
 		const circumference = 2 * Math.PI * radius;
 		const strokeDashoffset = circumference * (1 - percentage);
 		const scoreColor = getScoreColor(value, max);
+		const gradientStops = getScoreGradientStops(value, max);
+		const gradientId = `score-gradient-${Math.random().toString(36).substr(2, 9)}`;
 
 		return (
 			<div
@@ -39,6 +62,13 @@ export const ScoreRing = forwardRef<HTMLDivElement, ScoreRingProps>(
 					aria-label={`Score: ${value} out of ${max}`}
 					style={{ transform: "rotate(-90deg)" }}
 				>
+					<defs>
+						<linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+							{gradientStops.map((stop, i) => (
+								<stop key={i} offset={stop.offset} stopColor={stop.color} />
+							))}
+						</linearGradient>
+					</defs>
 					<title>{`Score: ${value} out of ${max}`}</title>
 					<circle
 						cx={size / 2}
@@ -53,7 +83,7 @@ export const ScoreRing = forwardRef<HTMLDivElement, ScoreRingProps>(
 						cy={size / 2}
 						r={radius}
 						fill="none"
-						stroke={scoreColor}
+						stroke={`url(#${gradientId})`}
 						strokeWidth={strokeWidth}
 						strokeDasharray={circumference}
 						strokeDashoffset={strokeDashoffset}
@@ -61,10 +91,18 @@ export const ScoreRing = forwardRef<HTMLDivElement, ScoreRingProps>(
 					/>
 				</svg>
 				<div className="absolute inset-0 flex flex-col items-center justify-center">
-					<span className="font-mono text-4xl font-bold text-text-primary leading-none">
+					<span
+						className="font-mono font-bold leading-none"
+						style={{ fontSize: size * 0.267, color: scoreColor }}
+					>
 						{value.toFixed(1)}
 					</span>
-					<span className="font-mono text-sm text-text-tertiary">/{max}</span>
+					<span
+						className="font-mono text-text-tertiary"
+						style={{ fontSize: size * 0.089 }}
+					>
+						/{max}
+					</span>
 				</div>
 			</div>
 		);

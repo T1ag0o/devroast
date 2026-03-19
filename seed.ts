@@ -17,13 +17,7 @@ const DB_URL =
 	"postgresql://devroast:devroast@localhost:5432/devroast";
 
 const roastTypeEnum = pgEnum("roast_type", ["brutal", "friendly"]);
-const badgeStatusEnum = pgEnum("badge_status", [
-	"excellent",
-	"good",
-	"needs-improvement",
-	"bad",
-	"terrible",
-]);
+const badgeStatusEnum = pgEnum("badge_status", ["critical", "warning", "good"]);
 
 const submissions = pgTable("submissions", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -129,13 +123,7 @@ const feedbacks = [
 ];
 
 const languages = ["javascript", "python", "typescript", "rust", "go"];
-const statuses = [
-	"excellent",
-	"good",
-	"needs-improvement",
-	"bad",
-	"terrible",
-] as const;
+const statuses = ["critical", "warning", "good"] as const;
 const roastTypes = ["brutal", "friendly"] as const;
 
 async function seed() {
@@ -164,7 +152,7 @@ async function seed() {
 
 		submissionIds.push(submission.id);
 
-		const score = faker.number.int({ min: 0, max: 100 });
+		const score = faker.number.int({ min: 0, max: 10 });
 		const roastType = faker.helpers.arrayElement(roastTypes);
 		const badgeStatus = faker.helpers.arrayElement(statuses);
 		const feedback = faker.helpers.arrayElement(feedbacks);

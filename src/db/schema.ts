@@ -11,11 +11,9 @@ import {
 export const roastTypeEnum = pgEnum("roast_type", ["brutal", "friendly"]);
 
 export const badgeStatusEnum = pgEnum("badge_status", [
-	"excellent",
+	"critical",
+	"warning",
 	"good",
-	"needs-improvement",
-	"bad",
-	"terrible",
 ]);
 
 export const submissions = pgTable("submissions", {

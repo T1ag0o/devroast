@@ -144,3 +144,16 @@ export async function getSubmissionWithRoast(id: string) {
 	}>(sql, [id]);
 	return result[0];
 }
+
+export async function getMetrics() {
+	const sql = `
+    SELECT 
+      (SELECT COUNT(*) FROM submissions) as total_codes,
+      (SELECT COALESCE(AVG(score), 0) FROM roasts) as avg_score
+  `;
+	const result = await rawQuery<{ total_codes: bigint; avg_score: number }>(
+		sql,
+		[],
+	);
+	return result;
+}

@@ -2,7 +2,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { tv } from "tailwind-variants";
 
 const analysisCardVariants = tv({
-	base: "w-[480px] border border-border-primary p-5 flex flex-col gap-3 bg-bg-surface",
+	base: "border border-border-primary p-5 flex flex-col gap-3 bg-transparent",
 });
 
 const dotVariants = tv({
