@@ -16,18 +16,32 @@ specs/
 ## Visão Geral
 Descrição breve do que será implementado.
 
+## Stack
+- Biblioteca/framework utilizado
+- Versões importantes
+
 ## Decisões de Implementação
 | Decisão | Opção Escolhida | Justificativa |
 |---------|------------------|---------------|
 
+## Estrutura de Arquivos
+```
+src/
+└── ...
+```
+
 ## Arquitetura
-### Componentes/Arquivos
-| Arquivo | Ação | Descrição |
-|---------|------|-----------|
+### Diagrama/fluxo opcional
+```tsx
+// Exemplo de código relevante
+```
 
 ## To-Dos
 - [ ] Tarefa 1
 - [ ] Tarefa 2
+
+## Referências
+- [Link 1](url)
 ```
 
 ## Regras
@@ -36,3 +50,4 @@ Descrição breve do que será implementado.
 2. **Incluir To-Dos** → com checkboxes `[ ]` para rastrear progresso
 3. **Decisões de design** → documentar justificativas
 4. **Referenciar Pencil** → usar MCP para consultar design antes de specar
+5. **Commits atômicos** → separar specs por feature/escopo
