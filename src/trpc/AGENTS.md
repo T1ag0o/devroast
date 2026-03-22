@@ -168,3 +168,27 @@ export async function MetricsServer() {
 2. **try/catch em procedures** → retornar valores default em caso de erro
 3. **TRPCProvider no layout** → para permitir uso em toda a app
 4. **tipos através de AppRouter** → nunca definir tipos manualmente
+5. **Promise.all para queries paralelas** → quando múltiplas queries podem rodar simultaneamente
+
+## Queries Paralelas
+
+Quando uma procedure precisa de múltiplos dados que não dependem uns dos outros, usar `Promise.all` para execução em paralelo:
+
+```typescript
+// src/trpc/routers/dashboard.ts
+export const dashboardRouter = router({
+  getAll: publicProcedure.query(async () => {
+    const [metrics, topEntries, recentActivity] = await Promise.all([
+      getMetrics(),
+      getLeaderboardWithSubmissions(3),
+      getRecentSubmissions(10),
+    ]);
+    
+    return {
+      totalCodes: metrics[0]?.total_codes ?? 0,
+      topEntries,
+      recentActivity,
+    };
+  }),
+});
+```

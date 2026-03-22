@@ -5,9 +5,14 @@ import { useEffect, useRef, useState } from "react";
 interface AnimatedNumberProps {
 	value: number;
 	precision?: number;
+	format?: "standard" | "accounting";
 }
 
-export function AnimatedNumber({ value, precision = 0 }: AnimatedNumberProps) {
+export function AnimatedNumber({
+	value,
+	precision = 0,
+	format = "standard",
+}: AnimatedNumberProps) {
 	const [displayValue, setDisplayValue] = useState(value);
 	const prevValueRef = useRef(value);
 
@@ -34,5 +39,10 @@ export function AnimatedNumber({ value, precision = 0 }: AnimatedNumberProps) {
 		requestAnimationFrame(animate);
 	}, [value]);
 
-	return <span>{displayValue.toFixed(precision)}</span>;
+	const formattedValue =
+		format === "accounting"
+			? Math.round(displayValue).toLocaleString("en-US")
+			: displayValue.toFixed(precision);
+
+	return <span>{formattedValue}</span>;
 }

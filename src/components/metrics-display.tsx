@@ -20,8 +20,8 @@ export function MetricsDisplay() {
 	return (
 		<div className="flex items-center gap-6 text-text-tertiary font-mono text-xs">
 			<span>
-				<AnimatedNumber value={totalCodes} />
-				{",000 codes roasted"}
+				<AnimatedNumber value={totalCodes} format="accounting" />
+				{" codes roasted"}
 			</span>
 			<span>·</span>
 			<span>
