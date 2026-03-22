@@ -16,3 +16,7 @@ export const { trpc, HydrateClient } = createHydrationHelpers<typeof appRouter>(
 export async function getMetrics() {
 	return caller.metrics.getStats();
 }
+
+export async function getLeaderboardTop(limit = 3) {
+	return caller.leaderboard.getTop({ limit });
+}

@@ -1,3 +1,7 @@
+import { Suspense } from "react";
+import { LeaderboardFooter } from "@/components/leaderboard-footer";
+import { LeaderboardPreview } from "@/components/leaderboard-preview";
+import { LeaderboardSkeleton } from "@/components/leaderboard-skeleton";
 import { MetricsDisplay } from "@/components/metrics-display";
 import { HomeClient } from "./home-client";
 
@@ -19,43 +23,21 @@ export default function HomePage() {
 								shame_leaderboard
 							</span>
 						</div>
-						<span className="text-text-secondary font-mono text-xs hover:text-text-primary cursor-pointer">
+						<span className="flex items-center gap-1 px-3 py-1.5 border border-border-primary font-mono text-xs text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors cursor-pointer">
 							$ view_all &gt;&gt;
 						</span>
 					</div>
 
 					<p className="font-mono text-xs text-text-tertiary">
-						{/* the worst code on the internet, ranked by shame */}
+						<span className="font-bold">//</span> the worst code on the
+						internet, ranked by shame
 					</p>
 
-					<div className="border border-border-primary rounded overflow-hidden bg-bg-surface">
-						<div className="flex items-center h-10 px-5 border-b border-border-primary">
-							<span className="font-mono text-xs text-text-tertiary w-[50px]">
-								rank
-							</span>
-							<span className="font-mono text-xs text-text-tertiary w-[70px]">
-								score
-							</span>
-							<span className="font-mono text-xs text-text-tertiary flex-1">
-								code
-							</span>
-							<span className="font-mono text-xs text-text-tertiary w-[100px] text-right">
-								lang
-							</span>
-						</div>
-					</div>
+					<Suspense fallback={<LeaderboardSkeleton />}>
+						<LeaderboardPreview />
+					</Suspense>
 
-					<div className="text-center pt-4">
-						<span className="font-mono text-xs text-text-tertiary">
-							showing top 3 ·{" "}
-							<a
-								href="/leaderboard"
-								className="text-text-secondary hover:underline"
-							>
-								view full leaderboard &gt;&gt;
-							</a>
-						</span>
-					</div>
+					<LeaderboardFooter />
 				</div>
 			</div>
 		</main>

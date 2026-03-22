@@ -100,7 +100,7 @@ export async function getLeaderboardWithSubmissions(limit = 50) {
     FROM leaderboard l
     JOIN submissions s ON l.submission_id = s.id
     ORDER BY l.shame_score DESC
-    LIMIT $1
+    LIMIT ${Number(limit)}
   `;
 	const result = await rawQuery<{
 		id: string;
@@ -111,7 +111,7 @@ export async function getLeaderboardWithSubmissions(limit = 50) {
 		created_at: Date;
 		code: string;
 		language: string;
-	}>(sql, [limit]);
+	}>(sql, []);
 	return result;
 }
 
