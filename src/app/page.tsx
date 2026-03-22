@@ -5,6 +5,8 @@ import { LeaderboardSkeleton } from "@/components/leaderboard-skeleton";
 import { MetricsDisplay } from "@/components/metrics-display";
 import { HomeClient } from "./home-client";
 
+export const revalidate = 3600;
+
 export default function HomePage() {
 	return (
 		<main className="flex flex-col items-center w-full">

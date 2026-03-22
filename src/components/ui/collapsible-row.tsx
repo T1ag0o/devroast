@@ -9,6 +9,7 @@ interface LeaderboardRowProps {
 	codeFullHtml: string;
 	hasMore: boolean;
 	language: string;
+	previewLineCount?: number;
 }
 
 export function LeaderboardRow({
@@ -18,6 +19,7 @@ export function LeaderboardRow({
 	codeFullHtml,
 	hasMore,
 	language,
+	previewLineCount,
 }: LeaderboardRowProps) {
 	const getScoreVariant = () => {
 		if (score >= 8) return "text-accent-green";
@@ -41,6 +43,8 @@ export function LeaderboardRow({
 						previewHtml={codePreviewHtml}
 						fullHtml={codeFullHtml}
 						hasMore={hasMore}
+						previewLineCount={previewLineCount}
+						dynamicHeight
 					/>
 				</span>
 				<span className="font-mono text-xs text-text-secondary w-[100px] text-right">

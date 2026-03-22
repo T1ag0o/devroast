@@ -38,6 +38,7 @@ export const leaderboardRouter = router({
 					]);
 
 					return {
+						id: entry.id,
 						rank: entry.rank_position,
 						score: Math.round((10 - entry.shame_score / 10) * 10) / 10,
 						codeLines: entry.code.split("\n").slice(0, 6),

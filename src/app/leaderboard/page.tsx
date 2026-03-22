@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { LeaderboardCard } from "@/components/ui/leaderboard-card";
 import { getLeaderboardTop, getMetrics } from "@/trpc/server";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
 	title: "shame_leaderboard | devroast",
 	description: "The most roasted code on the internet",
@@ -39,7 +41,7 @@ export default async function LeaderboardPage() {
 				<div className="flex flex-col gap-5">
 					{entries.map((entry) => (
 						<LeaderboardCard
-							key={entry.rank ?? 0}
+							key={entry.id}
 							rank={entry.rank ?? 0}
 							score={entry.score}
 							codePreviewHtml={entry.codePreviewHtml}

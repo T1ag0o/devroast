@@ -1,6 +1,11 @@
 import { LeaderboardRow } from "@/components/ui/collapsible-row";
 import { getLeaderboardTop } from "@/trpc/server";
 
+function getLineCount(html: string): number {
+	const match = html.match(/<span class="line"/g);
+	return match ? match.length : 0;
+}
+
 export async function LeaderboardPreview() {
 	const entries = await getLeaderboardTop(3);
 
@@ -27,13 +32,14 @@ export async function LeaderboardPreview() {
 			) : (
 				entries.map((entry) => (
 					<LeaderboardRow
-						key={entry.rank ?? 0}
+						key={entry.id}
 						rank={entry.rank ?? 0}
 						score={entry.score}
 						codePreviewHtml={entry.codePreviewHtml}
 						codeFullHtml={entry.codeFullHtml}
 						hasMore={entry.hasMore}
 						language={entry.language}
+						previewLineCount={getLineCount(entry.codePreviewHtml)}
 					/>
 				))
 			)}

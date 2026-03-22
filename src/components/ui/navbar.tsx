@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { forwardRef, type HTMLAttributes } from "react";
 import { tv } from "tailwind-variants";
 
@@ -14,14 +15,14 @@ export const Navbar = forwardRef<HTMLDivElement, NavbarProps>(
 	({ className, logoText = "devroast", links = [], ...props }, ref) => {
 		return (
 			<nav ref={ref} className={navbarVariants({ className })} {...props}>
-				<div className="flex items-center gap-2">
+				<Link href="/" className="flex items-center gap-2">
 					<span className="text-accent-green font-mono text-xl font-bold">
 						&gt;
 					</span>
 					<span className="text-text-primary font-mono text-lg font-medium">
 						{logoText}
 					</span>
-				</div>
+				</Link>
 				<div className="flex-1" />
 				{links.map((link) => (
 					<a

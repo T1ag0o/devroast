@@ -8,7 +8,10 @@ interface CodeHtmlProps {
 	hasMore: boolean;
 	previewLineCount?: number;
 	fullLineCount?: number;
+	dynamicHeight?: boolean;
 }
+
+const LINE_HEIGHT = 22;
 
 export function CodeHtml({
 	previewHtml,
@@ -16,13 +19,24 @@ export function CodeHtml({
 	hasMore,
 	previewLineCount = 6,
 	fullLineCount = 0,
+	dynamicHeight = false,
 }: CodeHtmlProps) {
 	const [expanded, setExpanded] = useState(false);
 	const currentLineCount = expanded ? fullLineCount : previewLineCount;
 	const currentHtml = expanded ? fullHtml : previewHtml;
+	const shouldLimitHeight = dynamicHeight && !expanded && hasMore;
+	const gradientFadeHeight = 32;
+	const dynamicMaxHeight = shouldLimitHeight
+		? previewLineCount * LINE_HEIGHT + gradientFadeHeight
+		: undefined;
 
 	return (
-		<div className="flex min-h-[120px]">
+		<div
+			className="flex"
+			style={{
+				minHeight: dynamicHeight ? previewLineCount * LINE_HEIGHT : 120,
+			}}
+		>
 			<div className="flex flex-col gap-1 px-3 py-3 bg-bg-surface border-r border-border-primary min-w-[40px] flex-shrink-0">
 				{Array.from({ length: currentLineCount }, (_, i) => (
 					<span
@@ -37,14 +51,14 @@ export function CodeHtml({
 				<div
 					className="relative overflow-hidden"
 					style={{
-						maxHeight: expanded ? "none" : "144px",
+						maxHeight: dynamicMaxHeight ?? (expanded ? "none" : "144px"),
 						maskImage:
 							hasMore && !expanded
-								? "linear-gradient(to bottom, black calc(100% - 8px), transparent 100%)"
+								? "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)"
 								: undefined,
 						WebkitMaskImage:
 							hasMore && !expanded
-								? "linear-gradient(to bottom, black calc(100% - 8px), transparent 100%)"
+								? "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)"
 								: undefined,
 					}}
 				>
