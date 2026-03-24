@@ -21,7 +21,7 @@ export const leaderboardRouter = router({
 			const entries = await getLeaderboardWithSubmissions(limit);
 
 			const results = await Promise.all(
-				entries.map(async (entry) => {
+				entries.map(async (entry, index) => {
 					const codePreview = entry.code.split("\n").slice(0, 6).join("\n");
 					const codeFull = entry.code;
 					const hasMore = entry.code.split("\n").length > 6;
@@ -39,7 +39,7 @@ export const leaderboardRouter = router({
 
 					return {
 						id: entry.id,
-						rank: entry.rank_position,
+						rank: index + 1,
 						score: Math.round((10 - entry.shame_score / 10) * 10) / 10,
 						codeLines: entry.code.split("\n").slice(0, 6),
 						codePreviewHtml: cleanShikiHtml(previewHtml),
