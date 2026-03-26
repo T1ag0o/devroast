@@ -60,6 +60,7 @@ export interface CodeEditorProps {
 	lineCount?: number;
 	value?: string;
 	onChange?: (value: string) => void;
+	onLanguageChange?: (language: string) => void;
 	maxLength?: number;
 	className?: string;
 }
@@ -70,6 +71,7 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 			className,
 			value: controlledValue,
 			onChange,
+			onLanguageChange,
 			filename,
 			lineCount = 16,
 			maxLength = 2000,
@@ -155,12 +157,54 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 				/\bnew\s+\w+\s*\([^)]*\)\s*{/,
 			];
 
+			const cPatterns = [
+				/#include\s*</,
+				/\bint\s+main\s*\(/,
+				/\bprintf\s*\(/,
+				/\bscanf\s*\(/,
+				/\bmalloc\s*\(/,
+				/\bfree\s*\(/,
+				/\bstruct\s+\w+\s*{/,
+				/\bvoid\s+\*+/,
+				/\breturn\s+0\s*;/,
+				/\bchar\s+\w+\s*\[\s*\d+\s*\]/,
+			];
+
+			const cppPatterns = [
+				/\bstd::/,
+				/\bcout\s*<</,
+				/\bcin\s*>>/,
+				/\bclass\s+\w+\s*{/,
+				/\bpublic:\s*$/m,
+				/\bprivate:\s*$/m,
+				/\bvirtual\s+/,
+				/\btemplate\s*</,
+				/\bnamespace\s+\w+/,
+			];
+
 			const code = codeToDetect;
+
+			// Check C/C++ first (before Java because they share patterns)
+			const cScore = cPatterns.filter((p) => p.test(code)).length;
+			const cppScore = cppPatterns.filter((p) => p.test(code)).length;
+			if (cppScore >= 2) {
+				setLanguage("cpp");
+				onLanguageChange?.("cpp");
+				setAutoDetected(true);
+				return;
+			}
+			if (cScore >= 2) {
+				setLanguage("c");
+				onLanguageChange?.("c");
+				setAutoDetected(true);
+				return;
+			}
 
 			// Check Java (before C# because they share some patterns)
 			const javaScore = javaPatterns.filter((p) => p.test(code)).length;
 			if (javaScore >= 1) {
 				setLanguage("java");
+				onLanguageChange?.("java");
 				setAutoDetected(true);
 				return;
 			}
@@ -169,6 +213,7 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 			const jsScore = jsPatterns.filter((p) => p.test(code)).length;
 			if (jsScore >= 2) {
 				setLanguage("javascript");
+				onLanguageChange?.("javascript");
 				setAutoDetected(true);
 				return;
 			}
@@ -177,6 +222,7 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 			const pyScore = pythonPatterns.filter((p) => p.test(code)).length;
 			if (pyScore >= 2) {
 				setLanguage("python");
+				onLanguageChange?.("python");
 				setAutoDetected(true);
 				return;
 			}
@@ -185,6 +231,7 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 			const rustScore = rustPatterns.filter((p) => p.test(code)).length;
 			if (rustScore >= 2) {
 				setLanguage("rust");
+				onLanguageChange?.("rust");
 				setAutoDetected(true);
 				return;
 			}
@@ -193,6 +240,7 @@ export const CodeEditor = forwardRef<HTMLDivElement, CodeEditorProps>(
 			const goScore = goPatterns.filter((p) => p.test(code)).length;
 			if (goScore >= 2) {
 				setLanguage("go");
+				onLanguageChange?.("go");
 				setAutoDetected(true);
 				return;
 			}

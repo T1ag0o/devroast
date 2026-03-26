@@ -40,6 +40,7 @@ export async function LeaderboardPreview() {
 						hasMore={entry.hasMore}
 						language={entry.language}
 						previewLineCount={getLineCount(entry.codePreviewHtml)}
+						authorName={entry.authorName}
 					/>
 				))
 			)}
