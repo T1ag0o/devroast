@@ -3,15 +3,41 @@ import { notFound } from "next/navigation";
 import { codeToHtml } from "shiki";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { ScoreRing } from "@/components/ui/score-ring";
+import { ShareButton } from "@/components/ui/share-button";
 import { getSubmissionWithRoast } from "@/db/queries";
-
-export const metadata: Metadata = {
-	title: "roast_result | devroast",
-	description: "Your code has been roasted",
-};
 
 interface RoastResultPageProps {
 	params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({
+	params,
+}: RoastResultPageProps): Promise<Metadata> {
+	const { id } = await params;
+	const data = await getSubmissionWithRoast(id);
+
+	if (!data) {
+		return { title: "Roast Not Found" };
+	}
+
+	const score = data.score ? Number(data.score) : 5;
+	const feedback = data.feedback ? JSON.parse(data.feedback) : {};
+
+	return {
+		title: `devroast | score: ${score.toFixed(1)}/10`,
+		description: feedback.quote || "Your code has been roasted!",
+		openGraph: {
+			title: `devroast | score: ${score.toFixed(1)}/10`,
+			description: feedback.quote || "Your code has been roasted!",
+			images: [`/results/${id}/opengraph`],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: `devroast | score: ${score.toFixed(1)}/10`,
+			description: feedback.quote || "Your code has been roasted!",
+			images: [`/results/${id}/opengraph`],
+		},
+	};
 }
 
 const languageExtensions: Record<string, string> = {
@@ -48,7 +74,7 @@ export default async function RoastResultPage({
 			feedback = { quote: data.feedback, verdict: "analyzed" };
 		}
 	}
-	const score = data.score ? data.score / 10 : 5;
+	const score = data.score ? Number(data.score) : 5;
 
 	const issues: Issue[] = feedback?.issues || [
 		{
@@ -109,13 +135,9 @@ export default async function RoastResultPage({
 							<span>{data.code.split("\n").length} lines</span>
 						</div>
 
-						<button
-							type="button"
-							className="self-start flex items-center px-4 py-2 border border-border-primary font-mono text-xs text-text-primary hover:border-text-tertiary transition-colors cursor-not-allowed opacity-60"
-							disabled
-						>
-							<span>$ share_roast</span>
-						</button>
+						<ShareButton
+							url={`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/results/${id}`}
+						/>
 					</div>
 				</div>
 

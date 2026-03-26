@@ -141,6 +141,7 @@ import { Switch } from "@base-ui/react/switch";
 | ScoreRing | `score-ring.tsx` | Cliente | tv |
 | AnalysisCard | `analysis-card.tsx` | Cliente | tv |
 | Navbar | `navbar.tsx` | Cliente | tv |
+| ShareButton | `share-button.tsx` | Cliente | tv |
 
 ## Dependências Instaladas
 
@@ -149,3 +150,4 @@ import { Switch } from "@base-ui/react/switch";
 - `shiki` - Syntax highlighting server-side
 - `clsx` - Utilitário para classes (se necessário)
 - `tailwind-merge` - Merge de classes (evitar com tv)
+- `@takumi-rs/image-response` - Geração de imagens OpenGraph

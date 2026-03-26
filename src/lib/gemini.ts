@@ -1,11 +1,9 @@
 const API_TIMEOUT = 60000;
 const MIN_PROCESSING_TIME = 6000;
 
-const MODELS = {
-	openrouter: "anthropic/claude-3.5-sonnet",
-};
+const MODEL = "llama-3.3-70b-versatile";
 
-async function callOpenRouterWithTimeout(
+async function callGroqWithTimeout(
 	prompt: string,
 	config: { temperature: number; maxOutputTokens: number },
 ): Promise<string> {
@@ -13,19 +11,19 @@ async function callOpenRouterWithTimeout(
 		setTimeout(() => reject(new Error("API timeout")), API_TIMEOUT);
 	});
 
-	const apiKey = process.env.GEMINI_API_KEY;
+	const apiKey = process.env.GROQ_API_KEY;
 	if (!apiKey) {
 		throw new Error("GEMINI_API_KEY environment variable is not set");
 	}
 
-	const apiPromise = fetch("https://openrouter.ai/api/v1/chat/completions", {
+	const apiPromise = fetch("https://api.groq.com/openai/v1/chat/completions", {
 		method: "POST",
 		headers: {
 			Authorization: `Bearer ${apiKey}`,
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			model: MODELS.openrouter,
+			model: MODEL,
 			messages: [{ role: "user", content: prompt }],
 			temperature: config.temperature,
 			max_tokens: config.maxOutputTokens,
@@ -33,7 +31,7 @@ async function callOpenRouterWithTimeout(
 	}).then(async (response) => {
 		if (!response.ok) {
 			const error = await response.text();
-			throw new Error(`OpenRouter API error: ${response.status} - ${error}`);
+			throw new Error(`Groq API error: ${response.status} - ${error}`);
 		}
 		const data = await response.json();
 		return data.choices?.[0]?.message?.content || "";
@@ -360,9 +358,9 @@ ${code}
 Respond ONLY with valid JSON, NO markdown, NO explanation outside JSON.`;
 
 	try {
-		const text = await callOpenRouterWithTimeout(prompt, {
+		const text = await callGroqWithTimeout(prompt, {
 			temperature,
-			maxOutputTokens: 800,
+			maxOutputTokens: 600,
 		});
 
 		await new Promise((resolve) =>
@@ -418,6 +416,7 @@ Respond ONLY with valid JSON, NO markdown, NO explanation outside JSON.`;
 			suggestedFix: parsed.suggestedFix || getGenericMockFix(language),
 		};
 	} catch (error) {
+		console.error("[GEMINI] API call failed, using fallback:", error);
 		return getMockAnalysis(roastType, language);
 	}
 }
