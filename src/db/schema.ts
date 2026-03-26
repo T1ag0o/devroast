@@ -1,5 +1,6 @@
 import {
 	integer,
+	numeric,
 	pgEnum,
 	pgTable,
 	text,
@@ -27,7 +28,7 @@ export const submissions = pgTable("submissions", {
 export const roasts = pgTable("roasts", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	submissionId: uuid("submission_id").notNull(),
-	score: integer("score").notNull(),
+	score: numeric("score", { precision: 4, scale: 1 }).notNull(),
 	feedback: text("feedback").notNull(),
 	roastType: roastTypeEnum("roast_type").notNull().default("brutal"),
 	badgeStatus: badgeStatusEnum("badge_status"),

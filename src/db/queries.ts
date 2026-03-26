@@ -71,19 +71,15 @@ export async function getLeaderboard(limit = 50) {
 
 export async function canSubmit(ipHash: string): Promise<boolean> {
 	const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
-	const recentSubmission = await db
-		.select()
-		.from(submissions)
-		.where(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(submissions: any) =>
-				submissions.ipHash
-					.eq(ipHash)
-					.and(submissions.createdAt.gte(thirtySecondsAgo)),
-		)
-		.limit(1);
-
-	return recentSubmission.length === 0;
+	const sql = `
+    SELECT COUNT(*) as count FROM submissions
+    WHERE ip_hash = $1 AND created_at >= $2
+  `;
+	const result = await rawQuery<{ count: bigint }>(sql, [
+		ipHash,
+		thirtySecondsAgo.toISOString(),
+	]);
+	return Number(result[0]?.count || 0) === 0;
 }
 
 export async function getLeaderboardWithSubmissions(limit = 50) {
@@ -149,9 +145,9 @@ export async function getMetrics() {
 	const sql = `
     SELECT 
       (SELECT COUNT(*) FROM submissions) as total_codes,
-      (SELECT COALESCE(AVG(score), 0) FROM roasts) as avg_score
+      (SELECT COALESCE(AVG(score::numeric), 0) FROM roasts) as avg_score
   `;
-	const result = await rawQuery<{ total_codes: bigint; avg_score: number }>(
+	const result = await rawQuery<{ total_codes: bigint; avg_score: string }>(
 		sql,
 		[],
 	);

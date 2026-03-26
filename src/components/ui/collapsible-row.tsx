@@ -10,6 +10,7 @@ interface LeaderboardRowProps {
 	hasMore: boolean;
 	language: string;
 	previewLineCount?: number;
+	authorName?: string | null;
 }
 
 export function LeaderboardRow({
@@ -20,6 +21,7 @@ export function LeaderboardRow({
 	hasMore,
 	language,
 	previewLineCount,
+	authorName,
 }: LeaderboardRowProps) {
 	const getScoreVariant = () => {
 		if (score >= 8) return "text-accent-green";
