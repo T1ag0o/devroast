@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LeaderboardCard } from "@/components/ui/leaderboard-card";
 import { getLeaderboardTop, getMetrics } from "@/trpc/server";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
 	title: "shame_leaderboard | devroast",
