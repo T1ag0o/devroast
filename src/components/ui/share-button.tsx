@@ -38,13 +38,23 @@ export function ShareButton({ url }: ShareButtonProps) {
 	};
 
 	return (
-		<button
-			type="button"
-			onClick={handleShare}
-			className={buttonVariants({ variant: copied ? "success" : "default" })}
-		>
-			<span>$</span>
-			<span>{copied ? "copied!" : "share_roast"}</span>
-		</button>
+		<div className="flex items-center gap-2">
+			<button
+				type="button"
+				onClick={handleShare}
+				className={buttonVariants({ variant: copied ? "success" : "default" })}
+			>
+				<span>$</span>
+				<span>{copied ? "copied!" : "share_roast"}</span>
+			</button>
+			<button
+				type="button"
+				onClick={() => window.open(`${url}/opengraph`, "_blank")}
+				className={buttonVariants({ variant: "default" })}
+			>
+				<span>$</span>
+				<span>og_image</span>
+			</button>
+		</div>
 	);
 }

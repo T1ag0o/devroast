@@ -196,3 +196,30 @@ O botão `$ share_roast` na página de results permite copiar o link para compar
 - Retorna 404 se roast não existir
 - Arquivo do route handler deve ser `.tsx` para suportar JSX
 - Adicionar `NEXT_PUBLIC_BASE_URL` ao `.env` para produção
+
+## Neon JSONB Handling
+
+O driver `postgres` do Neon (e similares) faz parsing automático de colunas JSONB para objetos JavaScript.
+
+**Problema:** Ao usar `rawQuery`, o campo JSONB já retorna como objeto, não como string.
+
+```tsx
+// ❌ ERRADO: JSON.parse em objeto já parsed
+const feedback = data.feedback ? JSON.parse(data.feedback) : {};
+
+// ✅ CORRETO: Verificar tipo antes de parsear
+let feedback: Record<string, unknown> = {};
+if (data.feedback) {
+  if (typeof data.feedback === "object") {
+    feedback = data.feedback as Record<string, unknown>;
+  } else if (typeof data.feedback === "string") {
+    try {
+      feedback = JSON.parse(data.feedback);
+    } catch {
+      feedback = { quote: data.feedback };
+    }
+  }
+}
+```
+
+Este padrão deve ser usado em todas as páginas que leem campos JSONB do banco.

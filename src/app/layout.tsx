@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/ui/navbar";
 import { TRPCProvider } from "@/trpc/client";
 import "./globals.css";
@@ -23,7 +24,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${jetbrainsMono.variable} font-sans antialiased bg-bg-page`}
+				className={`${jetbrainsMono.variable} font-sans antialiased bg-bg-page pb-16`}
 			>
 				<TRPCProvider>
 					<Navbar
@@ -31,6 +32,7 @@ export default function RootLayout({
 						links={[{ label: "leaderboard", href: "/leaderboard" }]}
 					/>
 					{children}
+					<Footer />
 				</TRPCProvider>
 			</body>
 		</html>

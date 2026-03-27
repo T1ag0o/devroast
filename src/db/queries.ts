@@ -69,17 +69,35 @@ export async function getLeaderboard(limit = 50) {
 	);
 }
 
-export async function canSubmit(ipHash: string): Promise<boolean> {
-	const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+export async function canSubmit(
+	ipHash: string,
+): Promise<{ canSubmit: boolean; waitSeconds: number }> {
+	const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 	const sql = `
-    SELECT COUNT(*) as count FROM submissions
+    SELECT created_at FROM submissions
     WHERE ip_hash = $1 AND created_at >= $2
+    ORDER BY created_at DESC
+    LIMIT 1
   `;
-	const result = await rawQuery<{ count: bigint }>(sql, [
+	const result = await rawQuery<{ created_at: Date }>(sql, [
 		ipHash,
-		thirtySecondsAgo.toISOString(),
+		tenMinutesAgo.toISOString(),
 	]);
-	return Number(result[0]?.count || 0) === 0;
+
+	if (!result || result.length === 0) {
+		return { canSubmit: true, waitSeconds: 0 };
+	}
+
+	const lastSubmission = result[0].created_at;
+	const nextSubmitTime = new Date(lastSubmission.getTime() + 10 * 60 * 1000);
+	const now = new Date();
+	const waitMs = nextSubmitTime.getTime() - now.getTime();
+
+	if (waitMs <= 0) {
+		return { canSubmit: true, waitSeconds: 0 };
+	}
+
+	return { canSubmit: false, waitSeconds: Math.ceil(waitMs / 1000) };
 }
 
 export async function getLeaderboardWithSubmissions(limit = 50) {

@@ -47,11 +47,13 @@ export function CodeHtml({
 					</span>
 				))}
 			</div>
-			<div className="flex-1 min-w-0">
+			<div className="flex-1 w-0 min-w-0 overflow-hidden">
 				<div
-					className="relative overflow-hidden"
+					className="overflow-x-auto overflow-y-hidden"
 					style={{
-						maxHeight: dynamicMaxHeight ?? (expanded ? "none" : "144px"),
+						maxHeight:
+							dynamicMaxHeight ??
+							(expanded ? "none" : `${previewLineCount * 24 + 24}px`),
 						maskImage:
 							hasMore && !expanded
 								? "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)"
@@ -63,7 +65,7 @@ export function CodeHtml({
 					}}
 				>
 					<span
-						className="[&_pre]:inline [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs [&_pre]:!bg-transparent block"
+						className="[&_pre]:inline [&_pre]:px-3 [&_pre]:py-3 [&_pre]:font-mono [&_pre]:text-xs [&_pre]:!bg-transparent [&_pre]:whitespace-pre block whitespace-nowrap"
 						dangerouslySetInnerHTML={{
 							__html: currentHtml,
 						}}

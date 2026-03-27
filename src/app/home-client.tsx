@@ -23,7 +23,18 @@ export function HomeClient() {
 		},
 		onError: (error) => {
 			console.error("Roast error:", error.message);
-			alert(error.message || "Failed to roast code. Please try again.");
+			const message =
+				error.message || "Failed to roast code. Please try again.";
+			if (message.startsWith("RATE_LIMIT:")) {
+				const parts = message.split(":");
+				const waitSeconds = parseInt(parts[1], 10);
+				const minutes = Math.ceil(waitSeconds / 60);
+				alert(
+					`Rate limit exceeded. Please wait ${minutes} minute${minutes > 1 ? "s" : ""} before submitting again.`,
+				);
+			} else {
+				alert(message);
+			}
 		},
 	});
 

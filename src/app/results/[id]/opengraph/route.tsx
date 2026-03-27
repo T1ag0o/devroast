@@ -38,7 +38,18 @@ export async function GET(
 		}
 
 		const score = data.score ? Number(data.score) : 5;
-		const feedback = data.feedback ? JSON.parse(data.feedback) : {};
+		let feedback: { quote?: string; verdict?: string } = {};
+		if (data.feedback) {
+			if (typeof data.feedback === "object") {
+				feedback = data.feedback;
+			} else if (typeof data.feedback === "string") {
+				try {
+					feedback = JSON.parse(data.feedback);
+				} catch {
+					feedback = {};
+				}
+			}
+		}
 		const lineCount = data.code.split("\n").length;
 
 		console.log("[OG] Score:", score, "Quote:", feedback.quote);

@@ -37,11 +37,13 @@ export const roastRouter = router({
 				null;
 			const ipHash = getIpHash(ip);
 
-			// TODO: Re-enable rate limiting for production
-			// const canSubmitResult = await canSubmit(ipHash);
-			// if (!canSubmitResult) {
-			// 	throw new Error("Please wait before submitting again");
-			// }
+			const rateLimit = await canSubmit(ipHash);
+			if (!rateLimit.canSubmit) {
+				const minutes = Math.ceil(rateLimit.waitSeconds / 60);
+				throw new Error(
+					`RATE_LIMIT:${rateLimit.waitSeconds}:Please wait ${minutes} minute${minutes > 1 ? "s" : ""} before submitting again`,
+				);
+			}
 
 			const submission = await createSubmission({
 				code: input.code,

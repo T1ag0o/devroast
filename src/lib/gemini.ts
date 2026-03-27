@@ -289,21 +289,13 @@ export async function generateRoast(
 	roastType: "brutal" | "friendly",
 ): Promise<RoastAnalysis> {
 	const isBrutal = roastType === "brutal";
-	const temperature = isBrutal ? 1.2 : 0.7;
+	const temperature = isBrutal ? 1.4 : 1.0;
 
 	const startTime = Date.now();
 
 	let tone: string;
 	if (isBrutal) {
-		tone = `You are the most sarcastic, brutal code reviewer in existence. Think of yourself as a burnt-out senior dev who has seen code written by the worst programmers in existence - and THIS code somehow manages to disappoint you even more. 
-
-Rules:
-- Be EXTREMELY sarcastic and insulting in your quote
-- Find EVERY possible flaw and roast it mercilessly  
-- Use phrases like "seriously?", "what were you thinking?", "did you learn this from a 1990s tutorial?"
-- Be personally offended by bad code decisions
-- You have personally witnessed better code written by a cat on a keyboard
-- ALWAYS give very low scores (0-3) for code with security vulnerabilities, undefined behavior, or crashes`;
+		tone = `You are a sarcastic but fair code reviewer. You're witty and clever, not just mean. You give credit where it's due and criticize only when deserved.`;
 	} else {
 		tone = `You are a helpful, constructive code reviewer. Be friendly but still point out issues clearly and directly. Focus on helping the developer improve without being mean about it.`;
 	}
@@ -320,8 +312,7 @@ CRITICAL SECURITY CHECKS FOR C/C++ CODE:
 - Use after free: Check for accessing freed memory
 - Format string vulnerabilities: Check printf/scanf with user input as format string
 - Integer overflow: Check for arithmetic that could overflow
-- Undefined behavior: ANY undefined behavior should be marked CRITICAL and give score 0-2
-- Unreachable code: Check for code after goto, return, break that never executes`
+- Undefined behavior: ANY undefined behavior should be marked CRITICAL`
 			: "";
 
 	const prompt = `You are analyzing ${language} code.
@@ -330,24 +321,41 @@ PERSONALITY: ${tone}
 
 ${securityRequirements}
 
+SCORE INTERPRETATION (0-10) - BE EXTREMELY FAIR:
+- 0-1: SEVERE - Buffer overflow, SQL injection, code that DEFINITELY crashes, critical security vulnerabilities
+- 2-3: BAD - Multiple critical bugs that cause actual failures, completely unsafe code
+- 4-5: MEDIUM - Real problems like missing validation, severe bugs, major issues
+- 6-7: OK - Small improvements possible, code works fine
+- 8-9: GOOD - Near perfect, minor style preferences
+- 10: PERFECT - Flawless
+
+CRITICAL RULE - SIMPLE CODE DESERVES HIGH SCORES:
+- "Hello World" or 1-3 lines of basic code = score 7-10 (not shameful!)
+- console.log("hello") or print("hello") = score 8-10
+- If the code does what it says it does, it deserves at least 6-10
+- DO NOT penalize for using wrong language keyword if intent is clear (e.g., print vs console.log in JS)
+- Length alone is NOT a valid reason for low scores
+
 IMPORTANT REQUIREMENTS:
-1. You MUST identify AT LEAST 4 distinct issues
-2. For code with security vulnerabilities, undefined behavior, or crashes: mark as CRITICAL severity and give score 0-3
-3. The quote MUST be a hilarious, memorable insult about the SPECIFIC issues found
-4. The suggestedFix MUST be the actual corrected/improved ${language} code that FIXES the issues found! Include proper imports if needed. Use the SAME language as the input code (${language}).
+1. For simple code (1-5 lines, basic functionality): identify 1-2 minor suggestions or praise, score 7-10
+2. For longer code: identify real issues but be fair - don't invent problems
+3. The quote MUST be about SPECIFIC issues found, not generic criticism
+4. The suggestedFix MUST be the corrected code that FIXES real issues found
+5. Use DECIMAL scores (2.5, 3.7, 5.2, 6.8, etc.) - NOT just whole numbers
+6. If score < 4, the issues MUST be genuinely critical (security, crashes, bugs)
 
 Respond ONLY with valid JSON matching this exact schema:
 {
-  "score": (number 0-10, how bad/embarrassing the code is, 0=maximum shame/TERRIBLE code with crashes or security issues, 10=actually good),
-  "quote": (EXTREMELY sarcastic/hilarious roast quote about this ${language} code, max 120 chars, make it MEMORABLE and personally insulting, mention SPECIFIC issues found),
+  "score": (number 0-10, FAIR score based on actual problems found, use decimals like 2.5, 5.3, 7.8),
+  "quote": (funny roast quote about this ${language} code, max 120 chars, mention SPECIFIC issues),
   "issues": [
     {
       "severity": "critical" or "warning" or "good",
-      "title": "short punchy title of the issue",
-      "description": "harsh but educational explanation"
+      "title": "short title of the issue",
+      "description": "explanation"
     }
   ],
-  "suggestedFix": "The COMPLETE corrected/improved ${language} code that FIXES ALL the issues found. NO TEXT DESCRIPTION - just ${language} code!"
+  "suggestedFix": "The COMPLETE corrected ${language} code that FIXES ALL issues. NO text description - just ${language} code!"
 }
 
 Code to review:
@@ -360,7 +368,7 @@ Respond ONLY with valid JSON, NO markdown, NO explanation outside JSON.`;
 	try {
 		const text = await callGroqWithTimeout(prompt, {
 			temperature,
-			maxOutputTokens: 600,
+			maxOutputTokens: 800,
 		});
 
 		await new Promise((resolve) =>
@@ -425,15 +433,32 @@ function getMockAnalysis(
 	roastType: "brutal" | "friendly",
 	language: string,
 ): RoastAnalysis {
-	const score = roastType === "brutal" ? 7.5 : 8.5;
+	const baseScore = roastType === "brutal" ? 4.5 : 6.5;
+	const variance = (Math.random() - 0.5) * 3;
+	const score = Math.round((baseScore + variance) * 10) / 10;
 	const isBrutal = roastType === "brutal";
+
+	const quotes = isBrutal
+		? [
+				"Saw better code in a tutorial from 2005.",
+				"I'm not saying it's bad, but your variable names could use some creativity.",
+				"This code would pass a CS101 exam. Barely.",
+				"The indentation is inconsistent and it hurts my eyes.",
+				"Nothing wrong here... except for everything.",
+			]
+		: [
+				"This code is decent! A few minor improvements could help.",
+				"Good effort! Here are some things to consider.",
+				"Not bad at all! Some small tweaks would make it better.",
+				"Clean and functional! Just some style suggestions.",
+				"Well structured! A few optional improvements ahead.",
+			];
+	const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
 	return {
 		score,
 		verdict: determineVerdict(score),
-		quote: isBrutal
-			? "Okay fine, this code isn't terrible... but I'm contractually obligated to find something wrong."
-			: "This code is actually quite good! Minor suggestions only.",
+		quote,
 		issues: getGenericMockIssues(isBrutal, language),
 		suggestedFix: getGenericMockFix(language),
 	};

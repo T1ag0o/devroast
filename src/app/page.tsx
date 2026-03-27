@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { LeaderboardFooter } from "@/components/leaderboard-footer";
 import { LeaderboardPreview } from "@/components/leaderboard-preview";
@@ -25,9 +26,12 @@ export default function HomePage() {
 								shame_leaderboard
 							</span>
 						</div>
-						<span className="flex items-center gap-1 px-3 py-1.5 border border-border-primary font-mono text-xs text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors cursor-pointer">
+						<Link
+							href="/leaderboard"
+							className="flex items-center gap-1 px-3 py-1.5 border border-border-primary font-mono text-xs text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+						>
 							$ view_all &gt;&gt;
-						</span>
+						</Link>
 					</div>
 
 					<p className="font-mono text-xs text-text-tertiary">
